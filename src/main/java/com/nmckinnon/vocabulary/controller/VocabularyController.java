@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.stream.XMLStreamException;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.nmckinnon.vocabulary.domain.Word;
 import com.nmckinnon.vocabulary.exception.WordLookupException;
+import com.nmckinnon.vocabulary.util.WordParser;
 
 /**
  * A REST controller for vocabulary actions.
@@ -65,6 +68,8 @@ public class VocabularyController
             File file = new ClassPathResource("static/dictionary.xml").getFile();
             
             
+            new WordParser().parse(file);
+            
             System.out.println("file exists is: "+file.exists());
             
             
@@ -75,6 +80,10 @@ public class VocabularyController
             lResponse = new ResponseEntity<Object>(word, HttpStatus.OK);
         } 
         catch (IOException ioe) 
+        {
+            throw new WordLookupException();
+        } 
+        catch (XMLStreamException e) 
         {
             throw new WordLookupException();
         }
