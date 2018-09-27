@@ -67,17 +67,22 @@ public class VocabularyController
             // expect them to change that often
             File file = new ClassPathResource("static/dictionary.xml").getFile();
             
-            
-            new WordParser().parse(file);
-            
-            System.out.println("file exists is: "+file.exists());
+            // TODO: load at start
+            List<Word> words = new WordParser().parse(file);
             
             
-            String randomWord = randomWords.iterator().next();
+            Collections.shuffle(words);
+            
+            Word randomWord = words.iterator().next();
+            
+            //System.out.println("file exists is: "+file.exists());
+            
+            
+            //String randomWord = randomWords.iterator().next();
 
-            Word word = new Word(randomWord, "meaning", "pronunciation", "etymology");
+            //Word word = new Word(randomWord, "meaning", "pronunciation", "etymology");
             
-            lResponse = new ResponseEntity<Object>(word, HttpStatus.OK);
+            lResponse = new ResponseEntity<Object>(randomWord, HttpStatus.OK);
         } 
         catch (IOException ioe) 
         {

@@ -1,6 +1,7 @@
 package com.nmckinnon.vocabulary.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
 
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.StringUtils;
 
 import com.nmckinnon.vocabulary.domain.Word;
 
@@ -23,73 +24,113 @@ import com.nmckinnon.vocabulary.domain.Word;
 public class WordParser 
 {
 
-    public void parse(File file) throws XMLStreamException, IOException
+    public List<Word> parse(File file) throws XMLStreamException, IOException
     {
+        List<Word> words = null;
+        
         XMLInputFactory factory = XMLInputFactory.newInstance();
         
-        XMLEventReader eventReader = factory.createXMLEventReader(new ClassPathResource("static/dictionary.xml").getInputStream());
+        XMLEventReader eventReader = factory.createXMLEventReader(new FileInputStream(file));
         
         // TODO: stick in a Map; easy to get random and always same time
-        List<Word> words = new ArrayList<>();
+        words = new ArrayList<>();
+        
+        String currentElementName = null;
+        Word word = null;
         
         while(eventReader.hasNext()) 
         {
             XMLEvent e = eventReader.nextEvent();
-            System.out.println("ID:"+e.hashCode()+"["+e+"]");
+            //System.out.println("ID:"+e.hashCode()+"["+e+"]");
             
-            Word word = null;
             
             switch(e.getEventType())
             {
-                case XMLStreamConstants.START_ELEMENT: {
-                    if("word".equals(e.asStartElement().getName().getLocalPart()))
+                case XMLStreamConstants.START_ELEMENT: 
+                {
+                    String localName = e.asStartElement().getName().getLocalPart();
+                    
+                    localName = localName.trim();
+                    
+                    // System.out.println("localName is: "+localName);
+                    
+                    currentElementName = localName;
+                    
+                    if("word".equals(localName))
                     {
-                        System.out.println("We got a word ....");
                         // create a new Word
                         word = new Word();
+                        // System.out.println("WORDY is: "+word);
                     }
-                    else if("name".equals(e.asStartElement().getName().getLocalPart()))
-                    {
-                        // word.setName(e);
-                    }
+
                     break;
                 }
-                case XMLStreamConstants.CHARACTERS: 
-                    System.out.println("e.asCharacters().asCharacters(): "+e.asCharacters().asCharacters());
+                case XMLStreamConstants.CHARACTERS:
+                {
+                    String text = e.asCharacters().asCharacters().toString();
                     
-                    System.out.println("e.asCharacters().getData() CHARS is: "+e.asCharacters().getData());
+                    text = text.trim();
+                    
+                    if(null != text && !StringUtils.isEmpty(text))
+                    {
+                        //System.out.println("currentElementName: "+currentElementName);
+                        //System.out.println("text: "+text);
+                        
+                        if("name".equals(currentElementName))
+                        {
+                            word.setName(text);
+                            // System.out.println("WORD: "+word);
+                        }
+                        else if("meaning".equals(currentElementName))
+                        {
+                            word.setMeaning(text);
+                        }
+                        else if("example".equals(currentElementName))
+                        {
+                            word.setExample(text);
+                        }
+                        else if("etymology".equals(currentElementName))
+                        {
+                            // word.setName("some name");
+                            word.setEtymology(text);
+                        }      
+                        else if("pronunciation".equals(currentElementName))
+                        {
+                            // word.setName(e);
+                            word.setPronunciation(text);
+                        }
+                    }
+                         
+                    
+                    // System.out.println("e.asCharacters().getData() CHARS is: "+e.asCharacters().getData());
                     
                     /*int start = xmlr.getTextStart(); 
                     int length = xmlr.getTextLength(); 
                     System.out.print(new String(xmlr.getTextCharacters(), 
                                                 start, 
                                                 length)); */
-                    break; 
-                case XMLStreamConstants.CDATA: 
-                    System.out.println("<![CDATA[");
-                    System.out.println("e.asCharacters().getData() is: "+e.asCharacters().getData());
-                    
-                    /*start = e.getTextStart(); 
-                    length = xmlr.getTextLength(); 
-                    System.out.print(new String(xmlr.getTextCharacters(), 
-                                                start, 
-                                                length)); 
-                    System.out.print("]]>"); */
-                    break; 
-                case XMLStreamConstants.END_ELEMENT: {
+                    break;
+                }
+                case XMLStreamConstants.END_ELEMENT: 
+                {
                     if("word".equals(e.asEndElement().getName().getLocalPart()))
                     {
-                        System.out.println("We got a word ....");
                         // create a new Word
                         words.add(word);
                     }
                     break;
                 }
-                default: {
+                default: 
+                {
                     break;
                 }
             }
-        }
+        }// end while
+        
+        //System.out.println("words size is: "+words.size());
+        // System.out.println("words is: "+words);
+        
+        return words;
     }
     
     /*private static void printUsage() {

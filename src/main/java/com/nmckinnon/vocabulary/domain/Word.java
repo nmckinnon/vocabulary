@@ -95,4 +95,11 @@ public class Word
 	{
 		this.mEtymology = etymology;
 	}
+	
+	@Override
+	public String toString()
+	{
+	    return "Word.Name: "+this.mName;
+	}
+	
 }
