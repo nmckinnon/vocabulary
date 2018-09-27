@@ -3,6 +3,7 @@ package com.nmckinnon.vocabulary.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -77,29 +78,29 @@ public class VocabularyController
             
             // grab the dictionary of words we'll use; opted not to use a DB here since I don't 
             // expect them to change that often
-            File file = new ClassPathResource("static/dictionary.xml").getFile();
+            // File file = new ClassPathResource("static/dictionary.xml").getFile();
             
-            LOGGER.info("file is: "+file);
+            InputStream in = new ClassPathResource("static/dictionary.xml").getInputStream();
             
-            if(file.exists())
-            {
-                // TODO: load at start
-                List<Word> words = new WordParser().parse(file);
+            LOGGER.info("in is: "+in);
+            //LOGGER.info("file is: "+file);
+            
+            // TODO: load at start
+            //List<Word> words = new WordParser().parse(file);
+            List<Word> words = new WordParser().parse(in);
+
+            Collections.shuffle(words);
+
+            Word randomWord = words.iterator().next();
+
+            //System.out.println("file exists is: "+file.exists());
 
 
-                Collections.shuffle(words);
+            //String randomWord = randomWords.iterator().next();
 
-                Word randomWord = words.iterator().next();
+            //Word word = new Word(randomWord, "meaning", "pronunciation", "etymology");
 
-                //System.out.println("file exists is: "+file.exists());
-
-
-                //String randomWord = randomWords.iterator().next();
-
-                //Word word = new Word(randomWord, "meaning", "pronunciation", "etymology");
-
-                lResponse = new ResponseEntity<Object>(randomWord, HttpStatus.OK);
-            } 
+            lResponse = new ResponseEntity<Object>(randomWord, HttpStatus.OK);
         } 
         catch (IOException ioe) 
         {
