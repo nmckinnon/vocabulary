@@ -82,6 +82,8 @@ public class VocabularyController
             
             ClassPathResource lClassPathResource = new ClassPathResource("static/dictionary.xml");
             
+            LOGGER.info("lClassPathResource is: "+lClassPathResource);
+            
             if(lClassPathResource.getFile().exists())
             {
                 InputStream in = new ClassPathResource("static/dictionary.xml").getInputStream();
@@ -101,6 +103,8 @@ public class VocabularyController
             }
             else
             {
+                LOGGER.info("File doesn't exist");
+                
                 lResponse = new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
             }
         } 
