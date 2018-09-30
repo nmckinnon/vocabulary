@@ -80,27 +80,29 @@ public class VocabularyController
             // expect them to change that often
             // File file = new ClassPathResource("static/dictionary.xml").getFile();
             
-            InputStream in = new ClassPathResource("static/dictionary.xml").getInputStream();
+            ClassPathResource lClassPathResource = new ClassPathResource("static/dictionary.xml");
             
-            LOGGER.info("in is: "+in);
-            //LOGGER.info("file is: "+file);
-            
-            // TODO: load at start
-            //List<Word> words = new WordParser().parse(file);
-            List<Word> words = new WordParser().parse(in);
+            if(lClassPathResource.getFile().exists())
+            {
+                InputStream in = new ClassPathResource("static/dictionary.xml").getInputStream();
+                
+                LOGGER.info("in is: "+in);
+                //LOGGER.info("file is: "+file);
+                
+                // TODO: load at start
+                //List<Word> words = new WordParser().parse(file);
+                List<Word> words = new WordParser().parse(in);
 
-            Collections.shuffle(words);
+                Collections.shuffle(words);
 
-            Word randomWord = words.iterator().next();
-
-            //System.out.println("file exists is: "+file.exists());
-
-
-            //String randomWord = randomWords.iterator().next();
-
-            //Word word = new Word(randomWord, "meaning", "pronunciation", "etymology");
-
-            lResponse = new ResponseEntity<Object>(randomWord, HttpStatus.OK);
+                Word randomWord = words.iterator().next();
+                
+                lResponse = new ResponseEntity<Object>(randomWord, HttpStatus.OK);
+            }
+            else
+            {
+                lResponse = new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
+            }
         } 
         catch (IOException ioe) 
         {
