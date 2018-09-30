@@ -62,9 +62,10 @@ public class VocabularyController
     {
         ResponseEntity<Object> lResponse = null;
 
-        try 
-        {
+        //try 
+       // {
             LOGGER.info("In get");
+            System.out.println("In VocabularyController.get");
             
             
             /*List<String> randomWords = new ArrayList<>();
@@ -80,7 +81,7 @@ public class VocabularyController
             // expect them to change that often
             // File file = new ClassPathResource("static/dictionary.xml").getFile();
             
-            ClassPathResource lClassPathResource = new ClassPathResource("static/dictionary.xml");
+            /* ClassPathResource lClassPathResource = new ClassPathResource("static/dictionary.xml");
             
             LOGGER.info("lClassPathResource is: "+lClassPathResource);
             
@@ -106,8 +107,10 @@ public class VocabularyController
                 LOGGER.info("File doesn't exist");
                 
                 lResponse = new ResponseEntity<Object>(HttpStatus.NOT_FOUND);
-            }
-        } 
+            }*/
+            
+            lResponse = new ResponseEntity<Object>(HttpStatus.OK);
+        /*} 
         catch (IOException ioe) 
         {
             LOGGER.warn(ioe.getMessage());
@@ -117,7 +120,7 @@ public class VocabularyController
         {
             LOGGER.warn(e.getMessage());
             throw new WordLookupException();
-        }
+        }*/
         
         return lResponse;
     }// end get
